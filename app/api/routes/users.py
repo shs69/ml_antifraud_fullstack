@@ -1,4 +1,4 @@
-from app.models import UserRegister, UserPublic, UserCreate
+from app.models import UserRegister, UserPublic
 from app.api.deps import SessionDep
 from app import crud
 from fastapi import APIRouter, HTTPException, status
@@ -14,6 +14,5 @@ def register_user(session: SessionDep, user_in: UserRegister):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The user with this email already exists"
         )
-    user_create = UserCreate.model_validate(user_in)
-    user = crud.create_user(session=session, user_create=user_create)
+    user = crud.create_user(session=session, user_create=user_in)
     return user
