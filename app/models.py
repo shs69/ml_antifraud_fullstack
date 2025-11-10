@@ -2,7 +2,7 @@ import uuid
 
 from datetime import datetime
 from pydantic import EmailStr
-from typing import Sequence
+from typing import Sequence, Union
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -50,6 +50,11 @@ class Transaction(SQLModel):
     online_order: bool
 
 
+class TransactionUpdateFraud(SQLModel):
+    id: uuid.UUID
+    fraud: str
+
+
 class Transactions(Transaction, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4,
                           primary_key=True)
@@ -58,9 +63,9 @@ class Transactions(Transaction, table=True):
         foreign_key="users.id", nullable=False, ondelete="CASCADE")
     owner: Users | None = Relationship(back_populates="transactions")
     shop_coords: str = Field(nullable=False)
-    distance_from_home: float | None = Field(nullable=True, default=None)
-    distance_from_last_transaction: float | None = Field(
-        nullable=True, default=None)
+    distance_from_home: float
+    distance_from_last_transaction: float
+    fraud: str
 
 
 class TransactionPublic(Transaction):
@@ -77,11 +82,16 @@ class TransactionPublicList(SQLModel):
     data: Sequence[TransactionPublic]
     count: int
 
-# class TransactionCreate(TransactionBase):
-#     pass
 
-# class TransactionPublic(TransactionBase):
-#     pass
+class TransactionDataForModel(SQLModel):
+    id: uuid.UUID
+    distance_from_home: float
+    distance_from_last_transaction: float
+    ratio_to_median_purchase_price: float
+    repeat_retailer: bool
+    used_chip: bool
+    used_pin_number: bool
+    online_order: bool
 
 
 class Token(SQLModel):

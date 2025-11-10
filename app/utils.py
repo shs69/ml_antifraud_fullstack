@@ -1,7 +1,10 @@
+from io import StringIO
+from fastapi import UploadFile
 import requests
+import asyncio
 from typing import Tuple
 from geopy.distance import geodesic
-import asyncio
+import pandas as pd
 
 from app.models import Transaction, Transactions
 
@@ -84,3 +87,42 @@ async def calculate_transaction_distances(*, transaction_in: Transaction, home_c
 
 def str_coord_to_tuple(*, coord_string: str):
     return float(coord_string[1:-1].split(", ")[0]), float(coord_string[1:-1].split(", ")[1])
+
+
+def dict_insert_line(line: str, hash_map: dict) -> None:
+    keys = list(hash_map.keys())
+    for i, elem in enumerate(line.split(",")):
+        hash_map[keys[i]].append(elem)
+
+
+def csv_to_dict(file: UploadFile) -> dict:
+    contents = file.file.read().decode("utf-8")
+    f = StringIO(contents)
+    column_names = f.readline().rstrip().split(",")
+    parsed_file = {x: [] for x in column_names}
+    for line in f:
+        dict_insert_line(line, parsed_file)
+
+    return parsed_file
+
+
+def dict_to_transactions(data: dict):
+    transactions = []
+    for i in range(len(data["shop_name"])):
+        transaction_data = {
+            "shop_name": data["shop_name"][i].strip('"'),
+            "shop_adress": data["shop_address"][i].strip('"'),
+            "is_refill": int(data["is_refill"][i]),
+            "size": int(data["size"][i]),
+            "used_chip": str_to_bool(data["used_chip"][i]),
+            "used_pin_number": str_to_bool(data["used_pin_number"][i]),
+            "online_order": str_to_bool(data["online_order"][i])
+        }
+        transaction = Transaction(**transaction_data)
+        transactions.append(transaction)
+    return transactions
+
+
+def str_to_bool(s: str) -> bool:
+    s = s.strip()
+    return s in ("1", "1.0", "true", "True")

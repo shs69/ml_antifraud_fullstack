@@ -21,7 +21,6 @@ def get_db() -> Generator[Session, None, None]:
 
 SessionDep = Annotated[Session, Depends(get_db)]
 TokenDep = Annotated[str, Depends(reusable_oauth2)]
-print(TokenDep)
 
 
 def get_current_user(session: SessionDep, token: TokenDep) -> Users:

@@ -1,9 +1,10 @@
-from sqlmodel import Session, select, func, desc
+from sqlmodel import Session, select, func, desc, text
 
-from app.models import Users, UserRegister, Transaction, Transactions, TransactionList
+from app.models import Users, UserRegister, Transaction, Transactions, TransactionList, TransactionDataForModel
 from app.api.security import get_password_hash, verify_password
 from app.utils import calculate_transaction_distances, get_coordinates, str_coord_to_tuple
-from typing import Tuple
+from app.worker import check_transaction
+from typing import Optional
 import uuid
 
 
@@ -47,15 +48,47 @@ async def create_transaction(*, session: Session, transaction_in: Transaction, o
             home_coords=str_coord_to_tuple(coord_string=home_coords),
             last_transaction=last_transaction
         )
+    
+    print(last_transaction)
+    print(distance_from_last_transaction)
 
     db_obj = Transactions.model_validate(
         transaction_in, update={"user_id": owner_id, "shop_coords": str(shop_coords),
                                 "distance_from_home": distance_from_home,
-                                "distance_from_last_transaction": distance_from_last_transaction})
+                                "distance_from_last_transaction": distance_from_last_transaction,
+                                "fraud": "pending"})
+    
+    median = get_median_price_by_owner(session=session, owner_id=owner_id)
+
+    transaction_data = TransactionDataForModel(
+        id=db_obj.id,
+        distance_from_home=db_obj.distance_from_home,
+        distance_from_last_transaction=db_obj.distance_from_last_transaction,
+        ratio_to_median_purchase_price=db_obj.size / median if median else 1, 
+        repeat_retailer=last_transaction.shop_name == db_obj.shop_name if last_transaction else False,
+        used_chip=db_obj.used_chip,
+        used_pin_number=db_obj.used_pin_number,
+        online_order=db_obj.online_order
+        )
+
+    check_transaction.delay(transaction_data.model_dump_json())
+
     session.add(db_obj)
     session.commit()
     session.refresh(db_obj)
     return db_obj
+
+
+def update_transaction(*, session: Session, transaction_id: uuid.UUID, fraud_value: str):
+    transaction = session.get(Transactions, transaction_id)
+    if not transaction:
+        return None
+    transaction.fraud = fraud_value
+    transaction.sqlmodel_update(transaction)
+    session.add(transaction)
+    session.commit()
+    session.refresh(transaction)
+    return transaction.fraud
 
 
 def read_items(*, session: Session, owner_id: uuid.UUID, skip: int = 0, limit: int = 25) -> TransactionList:
@@ -83,3 +116,15 @@ def update_balance(*, session: Session, transaction_in: Transactions, current_us
     session.commit()
     session.refresh(current_user)
     return current_user.balance
+
+
+def get_median_price_by_owner(session: Session, owner_id: uuid.UUID) -> Optional[float]:
+    sql = text("""
+    SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY size) AS median_price
+    FROM transactions
+    WHERE user_id = :owner_id
+    """)
+    result = session.execute(sql, {"owner_id": owner_id}).first()
+    if not result:
+        return None
+    return result[0]

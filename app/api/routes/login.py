@@ -23,7 +23,6 @@ def login_access_token(session: SessionDep, form_data: Annotated[OAuth2PasswordR
     token = Token(
         access_token=create_access_token(user.id, access_token_expires)
     )
-    print(token)
     return token
 
 @router.post("/test-token", response_model=UserPublic)
