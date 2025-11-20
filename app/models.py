@@ -2,7 +2,7 @@ import uuid
 
 from datetime import datetime
 from pydantic import EmailStr
-from typing import Sequence, Union
+from typing import Optional, Sequence, Union
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -62,15 +62,17 @@ class Transactions(Transaction, table=True):
     user_id: uuid.UUID = Field(
         foreign_key="users.id", nullable=False, ondelete="CASCADE")
     owner: Users | None = Relationship(back_populates="transactions")
-    shop_coords: str = Field(nullable=False)
-    distance_from_home: float
-    distance_from_last_transaction: float
-    fraud: str
+    
+    shop_coords: Optional[str] = None
+    distance_from_home: Optional[float] = None
+    distance_from_last_transaction: Optional[float] = None
+    fraud: Optional[str] = None
 
 
 class TransactionPublic(Transaction):
     id: uuid.UUID
     created_at: datetime
+    fraud: Optional[str]
 
 
 class TransactionList(SQLModel):
@@ -85,8 +87,20 @@ class TransactionPublicList(SQLModel):
 
 class TransactionDataForModel(SQLModel):
     id: uuid.UUID
-    distance_from_home: float
-    distance_from_last_transaction: float
+    distance_from_home: Optional[float]
+    distance_from_last_transaction: Optional[float]
+    ratio_to_median_purchase_price: Optional[float]
+    repeat_retailer: Optional[bool]
+    used_chip: Optional[bool]
+    used_pin_number: Optional[bool]
+    online_order: Optional[bool]
+
+
+class TransactionDataForCelery(SQLModel):
+    id: uuid.UUID
+    user_home_coords: str
+    last_transaction_address: str
+    current_shop_address: str
     ratio_to_median_purchase_price: float
     repeat_retailer: bool
     used_chip: bool

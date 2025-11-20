@@ -1,16 +1,24 @@
+from fastapi.responses import StreamingResponse
 from app.models import Transaction, TransactionPublic, TransactionPublicList
 from app.api.deps import CurrentUser, SessionDep
 from app import crud
 from fastapi import HTTPException, APIRouter, UploadFile, status
 from app.utils import dict_to_transactions, csv_to_dict
-import asyncio
+from app.redis import sse_queue
+import json
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])
 
 
+async def event_generator():
+    while True:
+        await sse_queue.get()
+        yield "data: updated\n\n"
+
+
 @router.post("/")
 async def create_transactions(session: SessionDep, current_user: CurrentUser, transaction_in: Transaction) -> TransactionPublic:
-    transaction = await crud.create_transaction(
+    transaction = crud.create_transaction(
         session=session, transaction_in=transaction_in, owner_id=current_user.id, home_coords=current_user.home_coord)
     if not crud.update_balance(session=session, transaction_in=transaction, current_user_email=current_user.email):
         raise HTTPException(
@@ -21,22 +29,12 @@ async def create_transactions(session: SessionDep, current_user: CurrentUser, tr
 
 
 @router.get("/")
-def get_transactions(session: SessionDep, current_user: CurrentUser) -> TransactionPublicList:
-    data = crud.read_items(session=session, owner_id=current_user.id)
+def get_transactions(session: SessionDep, current_user: CurrentUser, start: int = 0, limit: int = 25) -> TransactionPublicList:
+    data = crud.read_items(
+        session=session, owner_id=current_user.id, skip=start, limit=limit)
     publicData = TransactionPublicList.model_validate(data)
     return publicData
 
-
-# @router.post("/update_transaction/")
-# def update_transaction(session: SessionDep, current_user: CurrentUser, model_update: TransactionUpdateFraud):
-#     correct_values = ["0", "1", 1, 0]
-#     if model_update.fraud not in correct_values:
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST,
-#             detail="Incorrect value of fraud")
-#     fraud = crud.update_transaction(
-#         session=session, transaction_id=model_update.id, fraud_value=model_update.fraud)
-#     return fraud
 
 @router.post("/file")
 async def insert_transactions_from_file(session: SessionDep, current_user: CurrentUser, file: UploadFile):
@@ -50,18 +48,13 @@ async def insert_transactions_from_file(session: SessionDep, current_user: Curre
 
     transactions = dict_to_transactions(data)
 
-    # tasks = [
-    #     crud.create_transaction(
-    #         session=session,
-    #         transaction_in=transaction,
-    #         home_coords=current_user.home_coord,
-    #         owner_id=current_user.id
-    #     )
-    #     for transaction in transactions
-    # ]
-    # await asyncio.gather(*tasks)
-
     for transaction in transactions:
-        await crud.create_transaction(session=session, transaction_in=transaction, home_coords=current_user.home_coord, owner_id=current_user.id)
+        crud.create_transaction(
+            session=session, transaction_in=transaction, owner_id=current_user.id, home_coords=current_user.home_coord)
 
     return transactions
+
+
+@router.get("/sse")
+async def sse_transactions():
+    return StreamingResponse(event_generator(), media_type="text/event-stream")

@@ -1,17 +1,17 @@
-from sqlmodel import Session, select, func, desc, text
+from sqlmodel import Session, select, func, asc, desc
 
-from app.models import Users, UserRegister, Transaction, Transactions, TransactionList, TransactionDataForModel
+from app.models import Users, UserRegister, Transaction, Transactions, TransactionList, TransactionDataForCelery
 from app.api.security import get_password_hash, verify_password
-from app.utils import calculate_transaction_distances, get_coordinates, str_coord_to_tuple
-from app.worker import check_transaction
-from typing import Optional
+from app.utils import get_coordinates
+from app.celery.worker import check_transaction
+from typing import Optional, Union
 import uuid
 
 
 def create_user(*, session: Session, user_create: UserRegister) -> Users:
     db_obj = Users.model_validate(user_create, update={
                                   "hashed_password": get_password_hash(user_create.password),
-                                  "home_coord": str(get_coordinates(adress=user_create.home_adress))})
+                                  "home_coord": str(get_coordinates(address=user_create.home_adress))})
     session.add(db_obj)
     session.commit()
     session.refresh(db_obj)
@@ -33,7 +33,7 @@ def autheticate(*, session: Session, email: str, password: str) -> Users | None:
     return user
 
 
-async def create_transaction(*, session: Session, transaction_in: Transaction, owner_id: uuid.UUID, home_coords: str) -> Transactions:
+def create_transaction(*, session: Session, transaction_in: Transaction, owner_id: uuid.UUID, home_coords: str) -> Transactions:
     last_transaction = session.exec(
         select(Transactions)
         .where(Transactions.user_id == owner_id)
@@ -41,35 +41,22 @@ async def create_transaction(*, session: Session, transaction_in: Transaction, o
         .limit(1)
     ).first()
 
-    shop_coords, \
-        distance_from_home, \
-        distance_from_last_transaction = await calculate_transaction_distances(
-            transaction_in=transaction_in,
-            home_coords=str_coord_to_tuple(coord_string=home_coords),
-            last_transaction=last_transaction
-        )
-    
-    print(last_transaction)
-    print(distance_from_last_transaction)
-
     db_obj = Transactions.model_validate(
-        transaction_in, update={"user_id": owner_id, "shop_coords": str(shop_coords),
-                                "distance_from_home": distance_from_home,
-                                "distance_from_last_transaction": distance_from_last_transaction,
-                                "fraud": "pending"})
-    
+        transaction_in, update={"user_id": owner_id})
+
     median = get_median_price_by_owner(session=session, owner_id=owner_id)
 
-    transaction_data = TransactionDataForModel(
+    transaction_data = TransactionDataForCelery(
         id=db_obj.id,
-        distance_from_home=db_obj.distance_from_home,
-        distance_from_last_transaction=db_obj.distance_from_last_transaction,
-        ratio_to_median_purchase_price=db_obj.size / median if median else 1, 
+        user_home_coords=home_coords,
+        last_transaction_address=last_transaction.shop_adress if last_transaction else "",
+        current_shop_address=db_obj.shop_adress,
+        ratio_to_median_purchase_price=db_obj.size / median if median else 1,
         repeat_retailer=last_transaction.shop_name == db_obj.shop_name if last_transaction else False,
         used_chip=db_obj.used_chip,
         used_pin_number=db_obj.used_pin_number,
         online_order=db_obj.online_order
-        )
+    )
 
     check_transaction.delay(transaction_data.model_dump_json())
 
@@ -79,12 +66,14 @@ async def create_transaction(*, session: Session, transaction_in: Transaction, o
     return db_obj
 
 
-def update_transaction(*, session: Session, transaction_id: uuid.UUID, fraud_value: str):
+def update_transaction(*, session: Session, transaction_id: uuid.UUID, update_dict: dict[str, Union[str, float]]):
     transaction = session.get(Transactions, transaction_id)
     if not transaction:
         return None
-    transaction.fraud = fraud_value
-    transaction.sqlmodel_update(transaction)
+
+    for key, value in update_dict.items():
+        setattr(transaction, key, value)
+
     session.add(transaction)
     session.commit()
     session.refresh(transaction)
@@ -96,7 +85,7 @@ def read_items(*, session: Session, owner_id: uuid.UUID, skip: int = 0, limit: i
         Transactions).where(Transactions.user_id == owner_id)
     count = session.exec(count_statement).one()
     statement = select(Transactions).where(
-        Transactions.user_id == owner_id).offset(skip).limit(limit)
+        Transactions.user_id == owner_id).offset(skip).limit(limit).order_by(desc(Transactions.created_at))
     data = session.exec(statement).all()
     return TransactionList(data=data, count=count)
 
@@ -119,12 +108,9 @@ def update_balance(*, session: Session, transaction_in: Transactions, current_us
 
 
 def get_median_price_by_owner(session: Session, owner_id: uuid.UUID) -> Optional[float]:
-    sql = text("""
-    SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY size) AS median_price
-    FROM transactions
-    WHERE user_id = :owner_id
-    """)
-    result = session.execute(sql, {"owner_id": owner_id}).first()
-    if not result:
-        return None
-    return result[0]
+    subquery = (
+        select(func.percentile_cont(0.5).within_group(asc(Transactions.size)))
+        .where(Transactions.user_id == owner_id)
+    )
+    result = session.exec(subquery).first()
+    return result or None
