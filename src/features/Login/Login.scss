@@ -1,0 +1,79 @@
+.login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: rgb(100, 166, 240, 1);
+  $input-height: 4rem;
+  overflow: hidden;
+
+  height: 100vh;
+  width: 100vw;
+  background: url("@assets/background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  &__form {
+    font-family: "Geist";
+    padding: 5rem 10rem;
+    display: flex;
+    font-size: 2rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 1);
+    border: 0.15rem solid rgb(126, 166, 220, 1);
+    box-shadow: 1rem 1rem 1rem rgb(126, 166, 220, 0.3);
+    border-radius: 2rem;
+  }
+
+  &__container {
+    margin: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    width: 100%;
+
+    &_button_cont {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.5rem;
+
+      button {
+        margin: 2rem 0;
+      }
+    }
+
+    form {
+      width: 100%;
+      label {
+        width: 100%;
+      }
+
+      input {
+        height: $input-height;
+        width: 95%;
+      }
+
+      input[type="email"] {
+        background-image: url("@assets/icons/envelope.png");
+        background-repeat: no-repeat;
+        background-position: 1rem center;
+        background-size: 2rem;
+        padding-left: 4rem;
+      }
+
+      input[type="password"] {
+        background-image: url("@assets/icons/padlock.png");
+        background-repeat: no-repeat;
+        background-position: 1rem center;
+        background-size: 2rem;
+        padding-left: 4rem;
+      }
+    }
+  }
+}

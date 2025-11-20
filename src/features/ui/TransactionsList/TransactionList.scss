@@ -1,0 +1,10 @@
+.transaction_list {
+  overflow: auto;
+  width: 100%;
+  flex: 4;
+  // background-color: rgb(235, 244, 255);
+  background-color: rgb(255, 255, 255);
+  border: 0.15rem solid rgb(126, 166, 220, 1);
+  border-radius: 1rem;
+  box-shadow: 0.3rem 0.3rem 0.5rem rgb(126, 166, 220, 0.5);
+}

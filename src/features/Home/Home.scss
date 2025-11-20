@@ -1,0 +1,52 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  // color: rgb(100, 166, 240, 1);
+  color: rgb(70, 130, 200);
+
+  &__cont {
+    padding: 1rem;
+    width: 90vw;
+    height: 90vh;
+    background-color: rgba(255, 255, 255, 1);
+    border: 0.15rem solid rgb(126, 166, 220, 1);
+    box-shadow: 1rem 1rem 1rem rgb(126, 166, 220, 0.5);
+    border-radius: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .fade-enter {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  .fade-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition:
+      opacity 200ms ease,
+      transform 200ms ease;
+  }
+
+  .fade-exit {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .fade-exit-active {
+    opacity: 0;
+    transform: scale(0.95);
+    transition:
+      opacity 200ms ease,
+      transform 200ms ease;
+  }
+}

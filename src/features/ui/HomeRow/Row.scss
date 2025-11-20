@@ -1,0 +1,15 @@
+.row {
+  flex: 1;
+  width: 100%;
+  overflow-x: scroll;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+}
+
+.row > * {
+  flex: 1;
+}

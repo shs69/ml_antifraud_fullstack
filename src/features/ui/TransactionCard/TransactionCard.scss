@@ -1,0 +1,35 @@
+.transaction_card {
+  top: 0;
+  left: 0;
+  width: 100%;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  font-size: 2rem;
+  gap: 8rem;
+  padding: 1rem 5rem;
+  margin: 1rem 0;
+}
+
+.transaction_card > * {
+  flex: 1;
+}
+
+.shop_address {
+  flex: 2;
+}
+
+.shop_name {
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.created_at {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 2rem;
+}

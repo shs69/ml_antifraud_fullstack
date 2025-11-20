@@ -1,0 +1,42 @@
+.button {
+  color: rgb(100, 166, 240, 1);
+  // background-color: rgb(126, 166, 220, 0.8);
+  background-color: rgb(255, 255, 255, 0.5);
+  border: 0.2rem solid rgb(126, 166, 220, 1);
+  border-radius: 1rem;
+  padding: 1rem;
+  min-width: 15rem;
+  font-family: "Geist";
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0 0 0.3rem rgb(0, 0, 0, 0.5);
+  }
+}
+
+label {
+  font-size: 1.5rem;
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+}
+
+select {
+  color: rgb(16, 81, 152);
+  padding: 0.2rem;
+  padding-left: 1rem;
+  border: 0.15rem solid rgb(126, 166, 220, 1);
+  border-radius: 1rem;
+  margin: 1rem 0;
+}
+
+input {
+  color: rgb(16, 81, 152);
+  padding: 0.2rem;
+  padding-left: 1rem;
+  border: 0.15rem solid rgb(126, 166, 220, 1);
+  border-radius: 1rem;
+  margin: 1rem 0;
+}
