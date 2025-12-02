@@ -26,6 +26,53 @@ export const getRightFormatTime = (
   return { time: rightTime, date: date };
 };
 
+export const validateLogin = (
+  email: string,
+  password: string,
+  setErrors: Dispatch<SetStateAction<{ email: string; password: string }>>,
+): boolean => {
+  const newErrors = {
+    email: "",
+    password: "",
+  };
+
+  if (!email.trim()) newErrors.email = "Электронная почта";
+  if (!password.trim()) newErrors.password = "Пароль";
+
+  setErrors(newErrors);
+  return Object.values(newErrors).every(e => e === "");
+};
+
+export const validateReg = (
+  email: string,
+  password: string,
+  homeAddress: string,
+  fullName: string,
+  setErrors: Dispatch<
+    SetStateAction<{
+      email: string;
+      password: string;
+      homeAddress: string;
+      fullName: string;
+    }>
+  >,
+): boolean => {
+  const newErrors = {
+    email: "",
+    password: "",
+    homeAddress: "",
+    fullName: "",
+  };
+
+  if (!email.trim()) newErrors.email = "Электронная почта";
+  if (!password.trim()) newErrors.password = "Пароль";
+  if (!homeAddress.trim()) newErrors.homeAddress = "Домашний адрес";
+  if (!fullName.trim()) newErrors.fullName = "ФИО";
+
+  setErrors(newErrors);
+  return Object.values(newErrors).every(e => e === "");
+};
+
 export const validateNewTransaction = (
   shopName: string,
   shopAddress: string,

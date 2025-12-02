@@ -1,6 +1,5 @@
 .button {
   color: rgb(100, 166, 240, 1);
-  // background-color: rgb(126, 166, 220, 0.8);
   background-color: rgb(255, 255, 255, 0.5);
   border: 0.2rem solid rgb(126, 166, 220, 1);
   border-radius: 1rem;
@@ -11,6 +10,59 @@
   &:hover {
     cursor: pointer;
     box-shadow: 0 0 0.3rem rgb(0, 0, 0, 0.5);
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 1);
+  border: 0.15rem solid rgb(126, 166, 220, 1);
+  box-shadow: 1rem 1rem 1rem rgb(126, 166, 220, 0.3);
+  border-radius: 2rem;
+  padding: 5rem 10rem;
+  font-size: 2rem;
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    width: 100%;
+
+    &_label_text {
+      font-size: 1.5rem;
+    }
+
+    .error {
+      font-size: 1.5rem;
+      color: rgb(19, 118, 247);
+      animation: shake 0.3s ease;
+    }
+
+    &_button_cont {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    &_register {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+
+      a {
+        color: rgb(70, 130, 200);
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
   }
 }
 

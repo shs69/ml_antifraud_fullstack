@@ -26,7 +26,13 @@ export const TransactionCard = (props: TransactionCardProps): JSX.Element => {
         {props.data.is_refill ? "+" : "-"}
         {props.data.size}
       </div>
-      <div className="fraud">{props.data.fraud ?? "pending"}</div>
+      <div className={props.data.fraud === "1" ? "fraud__error" : "fraud"}>
+        {!props.data.fraud
+          ? "pending"
+          : props.data.fraud === "1"
+            ? "Мошенническая"
+            : "Обычная"}
+      </div>
     </div>
   );
 };

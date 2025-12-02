@@ -6,6 +6,7 @@ import { createSelector, type PayloadAction } from "@reduxjs/toolkit";
 const initialState: LoginType = {
   token: null,
   user: null,
+  authLoading: true,
 };
 
 export const LoginSlice = createAppSlice({
@@ -15,6 +16,7 @@ export const LoginSlice = createAppSlice({
     logout: state => {
       state.token = null;
       state.user = null;
+      state.authLoading = false;
       localStorage.removeItem("token");
     },
     setToken: (state, action: PayloadAction<string>) => {
@@ -36,12 +38,24 @@ export const LoginSlice = createAppSlice({
         balance: action.payload.user.balance,
       };
       state.token = action.payload.token;
+      state.authLoading = action.payload.authLoading;
+    },
+    loadEnd: state => {
+      state.authLoading = false;
+    },
+    loadStart: state => {
+      state.authLoading = true;
     },
   },
 });
 
-export const { logout, setToken, setUser, setAuthData } = LoginSlice.actions;
+export const { logout, setToken, setUser, setAuthData, loadEnd, loadStart } =
+  LoginSlice.actions;
 
 export const selectAuth = (state: RootState) => state.login;
 export const selectToken = createSelector(selectAuth, auth => auth.token);
 export const selectUser = createSelector(selectAuth, auth => auth.user);
+export const selectAuthLoading = createSelector(
+  selectAuth,
+  auth => auth.authLoading,
+);

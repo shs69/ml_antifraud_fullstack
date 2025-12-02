@@ -5,6 +5,7 @@ import { LoginSlice } from "../features/Login/LoginSlice";
 import { authApi } from "../features/Login/LoginApi";
 import { transactionsApi } from "../features/Transaction/TransactionApi";
 import { TransactionSlice } from "../features/Transaction/TransactionSlice";
+import { regApi } from "../features/Register/RegApi";
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
@@ -16,6 +17,9 @@ const rootReducer = combineSlices(
   },
   {
     [transactionsApi.reducerPath]: transactionsApi.reducer,
+  },
+  {
+    [regApi.reducerPath]: regApi.reducer,
   },
 );
 // Infer the `RootState` type from the root reducer
@@ -33,9 +37,11 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
     //   return getDefaultMiddleware().concat(quotesApiSlice.middleware)
     // },
     middleware: getDefaultMiddleware => {
-      return getDefaultMiddleware()
-        .concat(authApi.middleware)
-        .concat(transactionsApi.middleware);
+      return getDefaultMiddleware().concat(
+        authApi.middleware,
+        transactionsApi.middleware,
+        regApi.middleware,
+      );
     },
     preloadedState,
   });

@@ -6,6 +6,7 @@ export type LoginType = {
     home_address: string;
     balance: string;
   } | null;
+  authLoading: boolean;
 };
 
 export type TransactionState = {
@@ -15,6 +16,7 @@ export type TransactionState = {
 export type SetAuthDataPayload = {
   user: UserData;
   token: string;
+  authLoading: boolean;
 };
 
 export type UserData = {
@@ -70,6 +72,22 @@ export type CorrectTransactionBody = {
   online_order: boolean;
 };
 
+export type RegisterResult = {
+  email: string;
+  full_name: string;
+  is_active: boolean;
+  home_adress: string;
+  balance: number;
+  id: string;
+};
+
+export type RegisterBody = {
+  email: string;
+  password: string;
+  fullName: string;
+  homeAddress: string;
+};
+
 export type TransactionCardProps = {
   userTransactionCount: number;
   start: number;
@@ -87,6 +105,14 @@ export type TransactionCardProps = {
     used_pin_number: boolean;
     fraud: string | null;
   };
+};
+
+export type FirstCardProps = {
+  shop_name: string;
+  shop_address: string;
+  created_at: string;
+  size: string;
+  fraud: string;
 };
 
 export type RowProps = {

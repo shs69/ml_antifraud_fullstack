@@ -4,7 +4,7 @@ import { selectToken, setAuthData } from "../features/Login/LoginSlice";
 import { useEffect } from "react";
 import { useLazyGetCurrentUserByIdQuery } from "../features/Login/LoginApi";
 import { checkTokenLocalStorage } from "../utils/utils";
-import { logout } from "../features/Login/LoginSlice";
+import { logout, loadStart } from "../features/Login/LoginSlice";
 import type { AppDispatch, RootState } from "./store";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 
@@ -17,9 +17,10 @@ export const useCheckAuth = () => {
   const token = useSelector(selectToken);
   const effectiveToken = token ?? checkTokenLocalStorage();
 
-
   useEffect(() => {
     const check = async () => {
+      dispatch(loadStart());
+
       if (!effectiveToken) {
         dispatch(logout());
         return;
@@ -27,7 +28,13 @@ export const useCheckAuth = () => {
 
       try {
         const userData = await getCurrentUser(effectiveToken).unwrap();
-        dispatch(setAuthData({ user: userData, token: effectiveToken }));
+        dispatch(
+          setAuthData({
+            user: userData,
+            token: effectiveToken,
+            authLoading: false,
+          }),
+        );
       } catch (err) {
         const error = err as FetchBaseQueryError;
         console.log("Ошибка:", error.data ?? error);
