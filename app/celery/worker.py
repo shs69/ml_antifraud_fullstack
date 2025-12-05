@@ -9,8 +9,8 @@ import pandas as pd
 
 celery_app = Celery(
     "worker",
-    broker_url="redis://redis:6379/0",
-    result_backend="redis://redis:6379/1"
+    broker_url="redis://127.0.0.1:6379/0",
+    result_backend="redis://127.0.0.1:6379/1"
 )
 
 lr = load_model(settings.LR_PATH)
