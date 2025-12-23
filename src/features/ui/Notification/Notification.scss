@@ -1,0 +1,31 @@
+.notifications {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 0.6rem;
+  overflow: hidden;
+
+  position: absolute;
+  z-index: 10;
+  right: 1rem;
+  top: 1rem;
+
+  .notification {
+    padding: 1rem 2rem;
+    background-color: white;
+    font-size: 2rem;
+
+    border: 0.2rem solid rgb(126, 166, 220, 1);
+    border-radius: 1rem;
+
+    &__error_msg {
+      font-size: clamp(0.8rem, 1vw + 0.6rem, 1.6rem);
+      font-weight: 600;
+    }
+
+    &__msg {
+      font-size: clamp(0.4rem, 1vw + 0.6rem, 1.4rem);
+    }
+  }
+}

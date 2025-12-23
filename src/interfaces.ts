@@ -59,6 +59,7 @@ export type Transaction = {
 
 export type Transactions = {
   count: number;
+  fraud_count: number;
   data: Transaction[];
 };
 
@@ -124,4 +125,9 @@ export type RowElemProps = {
   value: string;
   fontSize?: string;
   cursor?: string;
+};
+
+export type Notification = {
+  id: string;
+  shop_name: string;
 };

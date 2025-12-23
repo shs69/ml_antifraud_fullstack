@@ -7,6 +7,7 @@ import {
   selectToken,
   selectUser,
 } from "./features/Login/LoginSlice";
+import { addNotification } from "./features/ui/Notification/NotificationSlice";
 import { useEffect, type JSX } from "react";
 import { transactionsApi } from "./features/Transaction/TransactionApi";
 import {
@@ -20,6 +21,7 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 
 import { Reg } from "./features/Register/Reg";
+import { type Transaction } from "./interfaces";
 
 const PrivateRoutes = (props: { condition: boolean }) => {
   return props.condition ? <Outlet /> : <Navigate to="/login" />;
@@ -97,8 +99,20 @@ export const App = (): JSX.Element => {
   useEffect(() => {
     if (isLogged && user) {
       const sse = new EventSource("http://localhost:8000/transactions/sse");
-      sse.onmessage = () => {
+      sse.onmessage = message => {
+        const data: string = message.data as string;
         dispatch(transactionsApi.util.invalidateTags(["Transaction"]));
+        if (data.includes("Deleted")) {
+          const transactionData = JSON.parse(
+            data.split(": ").slice(1).join(""),
+          ) as Transaction;
+          dispatch(
+            addNotification({
+              id: transactionData.id,
+              shop_name: transactionData.shop_name,
+            }),
+          );
+        }
       };
       return () => {
         sse.close();

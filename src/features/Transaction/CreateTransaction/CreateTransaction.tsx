@@ -1,13 +1,16 @@
 import type { JSX } from "react";
 import "./CreateTransaction.scss";
 import { Row } from "../../ui/HomeRow/Row";
-import { RowBtn } from "../../ui/RowElementLogout/RowBtn";
+import { RowBtn } from "../../ui/RowElementBtn/RowBtn";
 import { closeWindow } from "../TransactionSlice";
 import { useAppDispatch } from "../../../app/hooks";
 import { forwardRef, useState } from "react";
 import { validateNewTransaction } from "../../../utils/utils";
-import { useCreateTransactionMutation } from "../TransactionApi";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
+import {
+  useCreateTransactionMutation,
+  useUploadFileMutation,
+} from "../TransactionApi";
 
 export const CreateTransaction = forwardRef<HTMLDivElement>(
   (_, ref): JSX.Element => {
@@ -18,8 +21,10 @@ export const CreateTransaction = forwardRef<HTMLDivElement>(
     const [paymentMethod, setPaymentMethod] = useState<
       "online" | "card" | "pin"
     >("online");
+    const [file, setFile] = useState<File | null>(null);
     const dispatch = useAppDispatch();
     const [createTransaction] = useCreateTransactionMutation();
+    const [uploadFile] = useUploadFileMutation();
 
     const [errors, setErrors] = useState({
       shopName: "",
@@ -27,7 +32,25 @@ export const CreateTransaction = forwardRef<HTMLDivElement>(
       size: "",
     });
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const selected = e.target.files?.[0];
+      if (!selected) return false;
+
+      setFile(selected);
+    };
+
     const createTransactionFn = async () => {
+      if (file) {
+        try {
+          await uploadFile(file);
+          closeWindowFn();
+        } catch (err) {
+          const error = err as FetchBaseQueryError;
+          console.log("Ошибка:", error.data ?? error);
+        }
+        return;
+      }
+
       if (!validateNewTransaction(shopName, shopAddress, size, setErrors)) {
         setTimeout(() => {
           setErrors({
@@ -148,6 +171,20 @@ export const CreateTransaction = forwardRef<HTMLDivElement>(
                 <option value="pin">Картой с примением пин-кода</option>
               </select>
             </label>
+            <div className="loadFile">
+              или загрузите CSV файл
+              <label>
+                {!file ? "Загрузить файл" : file.name}
+                <input
+                  className="inputFile"
+                  name="loadFile"
+                  type="file"
+                  id="loadFile"
+                  accept=".csv,text/csv"
+                  onChange={handleFileChange}
+                />
+              </label>
+            </div>
           </form>
           <Row>
             <RowBtn

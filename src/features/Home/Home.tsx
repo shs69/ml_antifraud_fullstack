@@ -8,15 +8,17 @@ import {
   transactionsApi,
   useGetTransactionsQuery,
 } from "../Transaction/TransactionApi";
-import { RowBtn } from "../ui/RowElementLogout/RowBtn";
+import { RowBtn } from "../ui/RowElementBtn/RowBtn";
+import { NotificationElem } from "../ui/Notification/Notification";
 import { logout, selectUser } from "../Login/LoginSlice";
 import {
   openWindow,
   selectCreateWindowOpen,
 } from "../Transaction/TransactionSlice";
+import { resetNotification } from "../ui/Notification/NotificationSlice";
+import { authApi } from "../Login/LoginApi";
 import { CreateTransaction } from "../Transaction/CreateTransaction/CreateTransaction";
 import { CSSTransition } from "react-transition-group";
-import { authApi } from "../Login/LoginApi";
 import "./Home.scss";
 
 export const Home = forwardRef<HTMLDivElement>((_, ref): JSX.Element => {
@@ -33,6 +35,7 @@ export const Home = forwardRef<HTMLDivElement>((_, ref): JSX.Element => {
 
   const logoutFn = () => {
     dispatch(logout());
+    dispatch(resetNotification());
     dispatch(transactionsApi.util.resetApiState());
     dispatch(authApi.util.resetApiState());
     void navigate("/login");
@@ -46,11 +49,12 @@ export const Home = forwardRef<HTMLDivElement>((_, ref): JSX.Element => {
     { skip: skipQuery },
   );
 
-  data ??= { count: NaN, data: [] };
+  data ??= { count: NaN, fraud_count: NaN, data: [] };
 
   return (
     <div className="home" ref={ref}>
       <div className="home__cont">
+        <NotificationElem />
         <Row>
           <RowElem
             name="Привествуем,"
@@ -60,7 +64,10 @@ export const Home = forwardRef<HTMLDivElement>((_, ref): JSX.Element => {
             name="Количество операций"
             value={data.count.toString()}
           ></RowElem>
-          <RowElem name="Мошеннических операций:" value="1"></RowElem>
+          <RowElem
+            name="Мошеннических операций:"
+            value={data.fraud_count.toString()}
+          ></RowElem>
           <RowBtn value="Добавить транзакцию" onClick={openWindowFn}></RowBtn>
           <RowBtn onClick={logoutFn} value="Выйти" />
         </Row>

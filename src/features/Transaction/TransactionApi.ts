@@ -24,7 +24,7 @@ export const transactionsApi = createApi({
       { offset: number; limit: number }
     >({
       query: ({ offset, limit }) => ({
-        url: `?start=${offset.toString()}&limit=${limit.toString()}`,
+        url: `/?start=${offset.toString()}&limit=${limit.toString()}`,
         method: "GET",
       }),
       keepUnusedDataFor: 300,
@@ -40,8 +40,24 @@ export const transactionsApi = createApi({
       },
       invalidatesTags: [{ type: "Transaction", id: "LIST" }],
     }),
+    uploadFile: build.mutation<Transactions, File>({
+      query: file => {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        return {
+          url: "/file",
+          method: "POST",
+          body: formData,
+        };
+      },
+      invalidatesTags: [{ type: "Transaction", id: "LIST" }],
+    }),
   }),
 });
 
-export const { useGetTransactionsQuery, useCreateTransactionMutation } =
-  transactionsApi;
+export const {
+  useGetTransactionsQuery,
+  useCreateTransactionMutation,
+  useUploadFileMutation,
+} = transactionsApi;

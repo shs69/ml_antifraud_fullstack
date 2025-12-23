@@ -1,6 +1,4 @@
 .transaction_card {
-  top: 0;
-  left: 0;
   width: 100%;
   position: absolute;
   display: flex;
@@ -17,6 +15,10 @@
 
 .shop_address {
   flex: 2;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .shop_name {
@@ -25,6 +27,17 @@
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
+  mix-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  .name {
+    mix-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .created_at {
@@ -37,5 +50,13 @@
 .fraud {
   &__error {
     color: rgb(179, 1, 1);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

@@ -48,6 +48,35 @@
           width: 95%;
         }
       }
+      .loadFile {
+        font-size: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        label {
+          width: auto;
+          margin: 1rem;
+          color: rgb(255, 255, 255);
+          background-color: rgb(100, 166, 240);
+          border-radius: 1rem;
+          border: 0.15rem solid rgb(126, 166, 220, 1);
+          box-shadow: 0.3rem 0.3rem 0.5rem rgb(126, 166, 220, 0.5);
+          padding: 1.5rem 2.5rem;
+          outline: white solid 0.15rem;
+          outline-offset: -0.3rem;
+
+          .inputFile {
+            display: none;
+          }
+
+          &:hover {
+            cursor: pointer;
+            box-shadow: 0.5rem 0.5rem 1rem rgba(126, 166, 220, 0.7);
+          }
+        }
+      }
     }
   }
 }

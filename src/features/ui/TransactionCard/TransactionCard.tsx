@@ -15,7 +15,7 @@ export const TransactionCard = (props: TransactionCardProps): JSX.Element => {
     >
       <div className="shop_name">
         <span>{props.userTransactionCount - props.index}.</span>
-        <span>{props.data.shop_name}</span>
+        <span className="name">{props.data.shop_name}</span>
       </div>
       <div className="shop_address">{props.data.shop_adress}</div>
       <div className="created_at">
