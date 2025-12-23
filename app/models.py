@@ -1,14 +1,13 @@
 import uuid
-
 from datetime import datetime
+from typing import Optional, Sequence
+
 from pydantic import EmailStr
-from typing import Optional, Sequence, Union
 from sqlmodel import Field, Relationship, SQLModel
 
 
 class UserBase(SQLModel):
-    email: EmailStr = Field(unique=True, index=True,
-                            max_length=255, nullable=False)
+    email: EmailStr = Field(unique=True, index=True, max_length=255, nullable=False)
     full_name: str | None = Field(default=None, max_length=255)
     is_active: bool = True
     home_adress: str = Field(nullable=False)
@@ -30,7 +29,8 @@ class Users(UserBase, table=True):
     hashed_password: str
     home_coord: str
     transactions: list["Transactions"] = Relationship(
-        back_populates="owner", cascade_delete=True)
+        back_populates="owner", cascade_delete=True
+    )
 
 
 class UserRegister(SQLModel):
@@ -56,13 +56,13 @@ class TransactionUpdateFraud(SQLModel):
 
 
 class Transactions(Transaction, table=True):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4,
-                          primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     created_at: datetime = Field(default_factory=datetime.now)
     user_id: uuid.UUID = Field(
-        foreign_key="users.id", nullable=False, ondelete="CASCADE")
+        foreign_key="users.id", nullable=False, ondelete="CASCADE"
+    )
     owner: Users | None = Relationship(back_populates="transactions")
-    
+
     shop_coords: Optional[str] = None
     distance_from_home: Optional[float] = None
     distance_from_last_transaction: Optional[float] = None
@@ -78,11 +78,13 @@ class TransactionPublic(Transaction):
 class TransactionList(SQLModel):
     data: Sequence[Transactions]
     count: int
+    fraud_count: int
 
 
 class TransactionPublicList(SQLModel):
     data: Sequence[TransactionPublic]
     count: int
+    fraud_count: int
 
 
 class TransactionDataForModel(SQLModel):

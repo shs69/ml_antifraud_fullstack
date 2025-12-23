@@ -26,14 +26,23 @@ def check_transaction(transaction_data: str):
         data = json.loads(transaction_data)
         id = data.pop("id")
 
+        coords = calculate_transaction_distances(
+            current_shop_address=data["current_shop_address"],
+            home_coords=str_coord_to_tuple(
+                coord_string=data["user_home_coords"]),
+            last_transaction_shop_address=data["last_transaction_address"]
+        )
+
+        if coords is None:
+            redis_sync.publish(
+                f"transaction:error",
+                f"{id}"
+            )
+            return
+
         shop_coords, \
             distance_from_home, \
-            distance_from_last_transaction = calculate_transaction_distances(
-                current_shop_address=data["current_shop_address"],
-                home_coords=str_coord_to_tuple(
-                    coord_string=data["user_home_coords"]),
-                last_transaction_shop_address=data["last_transaction_address"]
-            )
+            distance_from_last_transaction = coords
 
         model_data = {
             "distance_from_home": distance_from_home,

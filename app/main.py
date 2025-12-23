@@ -1,21 +1,23 @@
-from fastapi import FastAPI, APIRouter
+import asyncio
 from contextlib import asynccontextmanager
+
+from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session
-import asyncio
 
+from app.api.routes import login, transactions, users
 from app.core.db import engine, init_db
-from app.core.config import settings
-from app.api.routes import login, users, transactions
 from app.redis import redis_listener
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     asyncio.create_task(redis_listener())
+    print("START")
     with Session(engine) as session:
         init_db(session)
     yield
+
 
 app = FastAPI(lifespan=lifespan)
 

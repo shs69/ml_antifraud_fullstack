@@ -6,17 +6,19 @@ from geopy.distance import geodesic
 from app.models import Transaction
 
 
-def get_coordinates(*, address: str) -> Tuple[float, float]:
+def get_coordinates(*, address: str) -> Optional[Tuple[float, float]]:
     url: str = "https://geocode-maps.yandex.ru/v1/"
     params: dict[str, str] = {
         "apikey": "86b267e6-434c-4d80-a44f-ee8bf21fba8f",
         "geocode": address,
         "format": "json"
     }
+
     r: requests.models.Response = requests.get(url=url, params=params)
+
     r_json: dict = r.json()
     received_objects: dict = r_json['response']["GeoObjectCollection"]["featureMember"]
-    coord: Tuple[float, float]
+    coord: Optional[Tuple[float, float]] = None
 
     for elem in received_objects:
         geo_object = elem["GeoObject"]
@@ -40,11 +42,16 @@ def calculate_transaction_distances(
     last_transaction_shop_address: str
 ):
     current_shop_coords = get_coordinates(address=current_shop_address)
+    if current_shop_coords is None:
+        return None
     distance_from_home = get_distance_coords(home_coords, current_shop_coords)
-    last_shop_coords: Tuple[float, float]
+    last_shop_coords: Optional[Tuple[float, float]]
 
     if last_transaction_shop_address != "":
-        last_shop_coords = get_coordinates(address=last_transaction_shop_address)
+        last_shop_coords = get_coordinates(
+            address=last_transaction_shop_address)
+        if last_shop_coords is None:
+            return None
         distance_from_last_transaction = get_distance_coords(
             current_shop_coords, last_shop_coords)
         return current_shop_coords, distance_from_home, distance_from_last_transaction
