@@ -1,0 +1,7 @@
+Alembic migrations for the backend database.
+
+Common commands:
+
+    alembic revision --autogenerate -m "describe change"
+    alembic upgrade head
+    alembic downgrade -1
