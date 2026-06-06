@@ -1,14 +1,9 @@
-from sqlmodel import SQLModel, Session, create_engine, select
-from app.core.config import settings
+from sqlmodel import Session, select
 from app.models import Users, UserRegister
 from app import crud
-
-engine = create_engine(str(settings.SQLALCHEMY_DATABASE_URI))
-print(settings.SQLALCHEMY_DATABASE_URI)
-
+from app.core.database import engine
 
 def init_db(session: Session):
-    SQLModel.metadata.create_all(engine)
     user = session.exec(
         select(Users)
     ).first()

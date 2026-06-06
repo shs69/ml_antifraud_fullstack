@@ -6,12 +6,14 @@ import joblib
 
 
 def load_model(filename: str) -> Pipeline:
-    with open(filename, 'rb') as f:
+    with open(filename, "rb") as f:
         model = joblib.load(f)
     return model
 
 
-def predict_with_saved_model(model: Pipeline, new_data: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
+def predict_with_saved_model(
+    model: Pipeline, new_data: pd.DataFrame
+) -> Tuple[np.ndarray, np.ndarray]:
 
     if isinstance(new_data, pd.Series):
         new_data = new_data.to_frame().T

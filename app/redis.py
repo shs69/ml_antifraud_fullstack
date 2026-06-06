@@ -3,7 +3,7 @@ from sqlmodel import Session
 import json
 import asyncio
 
-redis_sync = Redis(host="redis", port=6379, db=0, decode_responses=True)
+redis_sync = Redis(host="127.0.0.1", port=6379, db=0, decode_responses=True)
 
 redis_async = aioredis.Redis(
     host="127.0.0.1", port=6379, db=0, decode_responses=True)
