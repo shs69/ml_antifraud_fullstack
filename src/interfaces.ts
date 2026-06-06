@@ -11,6 +11,8 @@ export type LoginType = {
 
 export type TransactionState = {
   createWindowOpen: boolean;
+  detailsWindowsOpen: boolean;
+  detailsTransaction: TransactionCardProps["data"] | null;
 };
 
 export type SetAuthDataPayload = {
@@ -55,6 +57,7 @@ export type Transaction = {
   id: string;
   created_at: string;
   fraud: string | null;
+  reasons: string | null;
 };
 
 export type Transactions = {
@@ -105,6 +108,7 @@ export type TransactionCardProps = {
     used_chip: boolean;
     used_pin_number: boolean;
     fraud: string | null;
+    reasons: string | null;
   };
 };
 
@@ -130,4 +134,5 @@ export type RowElemProps = {
 export type Notification = {
   id: string;
   shop_name: string;
+  status: "queued" | "shown";
 };

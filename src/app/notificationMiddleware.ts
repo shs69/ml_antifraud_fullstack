@@ -1,21 +1,32 @@
 import { type Middleware } from "@reduxjs/toolkit";
 import {
-  addNotification,
   removeNotification,
+  showNotification,
+  selectNotificationById,
 } from "../features/ui/Notification/NotificationSlice";
+import { type RootState } from "./store";
 
 const timers = new Map<string, ReturnType<typeof setTimeout>>();
 
 export const notificationsMiddleware: Middleware = store => next => action => {
-  if (addNotification.match(action)) {
-    const { id } = action.payload;
+  if (showNotification.match(action)) {
+    const id = action.payload;
+    const notification = selectNotificationById(action.payload)(
+      store.getState() as RootState,
+    );
 
-    const timer = setTimeout(() => {
-      store.dispatch(removeNotification(id));
-      timers.delete(id);
-    }, 2000);
+    if (!notification) return next(action);
 
-    timers.set(id, timer);
+    const { status } = notification;
+
+    if (status == "queued" && !timers.has(id)) {
+      const timer = setTimeout(() => {
+        store.dispatch(removeNotification(id));
+        timers.delete(id);
+      }, 2000);
+
+      timers.set(id, timer);
+    }
   }
 
   if (removeNotification.match(action)) {

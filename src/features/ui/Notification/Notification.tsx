@@ -1,12 +1,21 @@
 import { type JSX } from "react";
 import "./Notification.scss";
 import { AnimatePresence, motion } from "motion/react";
-import { useAppSelector } from "../../../app/hooks";
-import { selectNotifications } from "./NotificationSlice";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { selectNotifications, showNotification } from "./NotificationSlice";
+import { type Notification } from "../../../interfaces";
 
 export const NotificationElem = (): JSX.Element => {
+  const dispatch = useAppDispatch();
   const notifications = useAppSelector(selectNotifications);
+
+  const toShow = (notification: Notification) => {
+    const { id } = notification;
+    dispatch(showNotification(id));
+  };
+
   const notificationsToShow = notifications.slice(0, 5);
+  notificationsToShow.forEach(toShow);
 
   return (
     <div className="notifications">

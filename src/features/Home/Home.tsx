@@ -14,18 +14,22 @@ import { logout, selectUser } from "../Login/LoginSlice";
 import {
   openWindow,
   selectCreateWindowOpen,
+  selectDetailsWindowOpen,
 } from "../Transaction/TransactionSlice";
 import { resetNotification } from "../ui/Notification/NotificationSlice";
 import { authApi } from "../Login/LoginApi";
 import { CreateTransaction } from "../Transaction/CreateTransaction/CreateTransaction";
 import { CSSTransition } from "react-transition-group";
 import "./Home.scss";
+import { TransactionWindow } from "../Transaction/DetailsTransaction/TransactionWindow.tsx";
 
 export const Home = forwardRef<HTMLDivElement>((_, ref): JSX.Element => {
   const nodeRef = useRef(null);
+  const nodeRef2 = useRef(null);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const isOpenWindow = useAppSelector(selectCreateWindowOpen);
+  const isDetailsOpen = useAppSelector(selectDetailsWindowOpen);
   const user = useAppSelector(selectUser);
   const skipQuery = !user;
 
@@ -80,6 +84,15 @@ export const Home = forwardRef<HTMLDivElement>((_, ref): JSX.Element => {
           nodeRef={nodeRef}
         >
           <CreateTransaction ref={nodeRef} />
+        </CSSTransition>
+        <CSSTransition
+          in={isDetailsOpen}
+          timeout={200}
+          classNames="fade"
+          unmountOnExit
+          nodeRef={nodeRef2}
+        >
+          <TransactionWindow ref={nodeRef2} />
         </CSSTransition>
       </div>
     </div>

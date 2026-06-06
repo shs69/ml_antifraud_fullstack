@@ -1,62 +1,85 @@
 .transaction_card {
-  width: 100%;
-  position: absolute;
-  display: flex;
-  align-items: center;
-  font-size: 2rem;
-  gap: 8rem;
-  padding: 1rem 5rem;
-  margin: 1rem 0;
+	width: 100%;
+	position: absolute;
+	display: flex;
+	align-items: center;
+	font-size: 2rem;
+	gap: 8rem;
+	padding: 1rem 5rem;
+	margin: 1rem 0;
+
+	&::after {
+		content: '';
+		position: absolute;
+
+		left: 5px;
+		right: 5px;
+
+		top: 0;
+		bottom: 0;
+
+		border: 0.15rem solid rgb(126, 166, 220, 1);
+		border-radius: 0.5rem;
+
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.1s ease-in-out;
+	}
+
+	&:hover::after {
+		opacity: 1;
+	}
 }
 
 .transaction_card > * {
-  flex: 1;
+	flex: 1;
 }
 
 .shop_address {
-  flex: 2;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+	flex: 2;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .shop_name {
-  font-size: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  mix-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+	font-size: 2rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5rem;
+	mix-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 
-  .name {
-    mix-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+	.name {
+		mix-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
 }
 
 .created_at {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 2rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 2rem;
 }
 
 .fraud {
-  &__error {
-    color: rgb(179, 1, 1);
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+	&__error {
+		color: rgb(179, 1, 1);
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }

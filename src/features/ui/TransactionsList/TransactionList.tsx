@@ -50,7 +50,12 @@ export const TransactionList = ({
     <div ref={parentRef} className="transaction_list">
       <div
         className="transaction_card"
-        style={{ position: "relative", marginBottom: "0", paddingBottom: "0" }}
+        style={{
+          position: "relative",
+          marginBottom: "0",
+          paddingBottom: "0",
+          pointerEvents: "none",
+        }}
       >
         <div className="shop_name">
           <span>Название</span>

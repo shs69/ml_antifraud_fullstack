@@ -10,6 +10,7 @@ export const RowBtn = (props: {
     color?: string;
     outline?: string;
     outlineOffset?: string;
+    width?: string;
   };
 }): JSX.Element => {
   return (

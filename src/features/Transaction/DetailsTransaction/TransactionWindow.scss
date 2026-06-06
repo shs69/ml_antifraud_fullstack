@@ -1,0 +1,75 @@
+.blur_foreground {
+	background-color: rgba(255, 255, 255, 0.1);
+	backdrop-filter: blur(0.1rem);
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 9999;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	.window {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		background-color: rgba(255, 255, 255, 1);
+		border: 0.15rem solid rgb(126, 166, 220, 1);
+		box-shadow: 0 0 2rem rgb(126, 166, 220, 0.8);
+		border-radius: 2rem;
+		font-size: 2rem;
+		padding: 2rem 7rem;
+		$input-height: 4rem;
+		color: rgb(100, 166, 240, 1);
+
+		.error {
+			font-size: 1.5rem;
+			color: rgb(19, 118, 247);
+			animation: shake 0.3s ease;
+		}
+
+		&__text {
+			font-size: 1.5rem;
+		}
+
+		.shop_name {
+			font-size: 3rem;
+			padding: 1rem;
+		}
+
+		.cont {
+			padding: 3rem;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: start;
+			width: 100%;
+			height: 100%;
+			gap: 1rem;
+
+
+			.shop_address {
+				font-size: 2rem;
+				text-wrap: pretty;
+			}
+
+			.fraud {
+				font-size: 2rem;
+			}
+
+			.fraud__error {
+				font-size: 2rem;
+			}
+
+			.reasons {
+				font-size: 1.75rem;
+
+				.reason {
+					font-size: 1.5rem;
+				}
+			}
+		}
+	}
+}
