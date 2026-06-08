@@ -1,0 +1,12 @@
+{
+  "rows": 959229,
+  "date_min": "2018-04-01 00:00:31",
+  "date_max": "2018-07-09 23:59:24",
+  "fraud_count": 7616,
+  "fraud_rate": 0.007939709912857097,
+  "customers": 4984,
+  "terminals": 10000,
+  "amount_mean": 53.61419745441391,
+  "amount_median": 44.66,
+  "amount_p99": 171.32
+}

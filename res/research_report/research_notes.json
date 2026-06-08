@@ -1,0 +1,14 @@
+{
+  "main_findings_to_check": [
+    "Compare supervised models against anomaly branch on temporal test split.",
+    "For unseen-scenario experiments, emphasize precision/recall trade-off and false positives.",
+    "If anomaly recall improves after velocity/novelty features, the weakness was partly feature-driven.",
+    "If scenario 3 remains weak, describe it as less separable by current behavioral signals."
+  ],
+  "defense_materials": [
+    "EDA plots for dataset imbalance, temporal dynamics, scenario distribution, and amount behavior.",
+    "Metric comparison plots for supervised, anomaly, and hybrid approaches.",
+    "Autoencoder/VAE training curve and threshold strategy description.",
+    "Clear conclusion that anomaly detection is useful for unknown fraud but requires calibration."
+  ]
+}

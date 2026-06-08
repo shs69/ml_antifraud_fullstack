@@ -8,3 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
+fraud_stream_pipeline/Archive.zip
+fraud_stream_pipeline/artifacts_without_geo_cp/production_inference_demo_30d.json
+fraud_stream_pipeline/artifacts_without_geo_cp/production_inference_demo_30d.json
+fraud_stream_pipeline/artifacts_without_geo_cp/

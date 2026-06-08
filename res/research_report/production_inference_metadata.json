@@ -1,0 +1,6 @@
+{
+  "lightgbm_path": "/Users/alex/dev/fraud_stream_pipeline/artifacts/lightgbm_pipeline.joblib",
+  "autoencoder_path": "/Users/alex/dev/fraud_stream_pipeline/artifacts/autoencoder_anomaly.joblib",
+  "train_end_day": 18,
+  "valid_end_day": 24
+}
